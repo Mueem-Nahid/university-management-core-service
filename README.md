@@ -6,11 +6,7 @@ This guide will walk you through the process of setting up the University Manage
 
 ### Follow these steps to clone and set up starter project:
 
-1. `Clone the project:` Open your terminal or command prompt and run the following command to clone the project repository:
-
-```bash
-git clone https://github.com/Programming-Hero-Next-Level-Development/university-management-core-service-starter.git university-management-core-service
-```
+1. `Clone the project:` Open your terminal or command prompt and run the following command to clone the project repository
 
 2. `Navigate into the project directory:` Use the cd command to navigate into the project directory:
 
