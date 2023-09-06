@@ -99,6 +99,3 @@ model Faculty {
 
   @@map("faculty")
 }
-
-
-// 36-1:

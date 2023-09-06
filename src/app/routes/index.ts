@@ -14,22 +14,24 @@ const moduleRoutes = [
     route: AcademicSemesterRoutes,
   },
   {
-    path: '/academic-faculties',
+    path: '/academic-faculty',
     route: AcademicFacultyRoutes,
   },
   {
-    path: '/academic-departments',
+    path: '/academic-department',
     route: AcademicDepartmentRoutes,
   },
   {
-    path: '/faculties',
+    path: '/faculty',
     route: FacultyRoutes,
   },
   {
-    path: '/students',
+    path: '/student',
     route: StudentRoutes,
   },
 ];
 
 moduleRoutes.forEach(route => router.use(route.path, route.route));
 export default router;
+
+// TODO: update, delete and set auth for all modules
