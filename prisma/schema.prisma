@@ -123,4 +123,4 @@ model Room {
   @@map("room")
 }
 
-// 36-4: Designing Building and Room Models, and Creating a New Building
+// 36-7: Creating New Room
