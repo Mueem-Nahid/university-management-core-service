@@ -7,7 +7,9 @@
 2. Intrgrate get data by id, filter data, update and delete functionalities in the following modules:
    - Building (get data by id, update and delete data)
    - Room (Filter data, get data by id, update and delete)
-   - Course (Filter data, get data by id, update and delete)
+   - Course (Filter data, get data by id, update and delete) X
 3. Add Zod validations in the following modules:
    - Room
    - Course
+
+// 37-1\_ Course Information Update - Part 1
