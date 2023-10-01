@@ -32,10 +32,28 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await CourseService.getByIdFromDB(id);
+  if (!result) {
+    return sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: true,
+      message: 'Course not found',
+    });
+  }
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Course fetched successfully',
+    data: result,
+  });
+});
+
+const updateCourse = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await CourseService.updateCourse(id, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Course updated successfully',
     data: result,
   });
 });
@@ -55,5 +73,6 @@ export const CourseController = {
   createCourse,
   getAllFromDB,
   getByIdFromDB,
+  updateCourse,
   deleteByIdFromDB,
 };

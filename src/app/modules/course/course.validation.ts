@@ -26,11 +26,11 @@ const update = z.object({
     title: z.string().optional(),
     code: z.string().optional(),
     credits: z.number().optional(),
-    preRequisiteCourses: z
+    prerequisiteCourses: z
       .array(
         z.object({
           courseId: z.string({}),
-          isDeleted: z.boolean({}).optional(),
+          shouldDelete: z.boolean({}).optional(),
         })
       )
       .optional(),
