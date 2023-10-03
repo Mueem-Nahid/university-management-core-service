@@ -12,4 +12,4 @@
    - Room X
    - Course X
 
-// 37-1\_ Course Information Update - Part 1
+- 37-5\_ Faculty Remove from Designated Course
