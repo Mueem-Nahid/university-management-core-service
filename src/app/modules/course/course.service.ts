@@ -298,6 +298,31 @@ const assignFaculties = async (
   return assignedFaculties;
 };
 
+const removeAssignedFaculty = async (
+  id: string,
+  payload: string[]
+): Promise<CourseFaculty[] | null> => {
+  await prisma.courseFaculty.deleteMany({
+    where: {
+      courseId: id,
+      facultyId: {
+        in: payload,
+      },
+    },
+  });
+
+  const assignedFaculties = await prisma.courseFaculty.findMany({
+    where: {
+      courseId: id,
+    },
+    include: {
+      faculty: true,
+    },
+  });
+
+  return assignedFaculties;
+};
+
 export const CourseService = {
   createCourse,
   getAllFromDB,
@@ -305,4 +330,5 @@ export const CourseService = {
   updateCourse,
   deleteByIdFromDB,
   assignFaculties,
+  removeAssignedFaculty,
 };
