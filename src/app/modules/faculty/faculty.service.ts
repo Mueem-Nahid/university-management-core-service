@@ -1,6 +1,3 @@
-import httpStatus from 'http-status';
-import ApiError from '../../../errors/ApiError';
-import { User } from '../user/user.model';
 import {
   facultyRelationalFields,
   facultyRelationalFieldsMapper,
@@ -8,7 +5,7 @@ import {
 } from './faculty.constant';
 import { IFaculty, IFacultyFilters } from './faculty.interface';
 
-import { Faculty, Prisma } from '@prisma/client';
+import { CourseFaculty, Faculty, Prisma } from '@prisma/client';
 import prisma from '../../../shared/prisma';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import { IGenericResponse } from '../../../interfaces/common';
@@ -121,10 +118,59 @@ const deleteFaculty = async (id: string): Promise<Faculty | null> => {
   return null;
 };
 
+const assignCourses = async (
+  id: string,
+  payload: string[]
+): Promise<CourseFaculty[]> => {
+  await prisma.courseFaculty.createMany({
+    data: payload.map(courseId => ({
+      facultyId: id,
+      courseId: courseId,
+    })),
+  });
+  const assignedCourses = await prisma.courseFaculty.findMany({
+    where: {
+      facultyId: id,
+    },
+    include: {
+      course: true,
+    },
+  });
+
+  return assignedCourses;
+};
+
+const removeAssignedCourses = async (
+  id: string,
+  payload: string[]
+): Promise<CourseFaculty[] | null> => {
+  await prisma.courseFaculty.deleteMany({
+    where: {
+      facultyId: id,
+      courseId: {
+        in: payload,
+      },
+    },
+  });
+
+  const assignedCourses = await prisma.courseFaculty.findMany({
+    where: {
+      facultyId: id,
+    },
+    include: {
+      course: true,
+    },
+  });
+
+  return assignedCourses;
+};
+
 export const FacultyService = {
   createFaculty,
   getAllFaculties,
   getSingleFaculty,
   updateFaculty,
   deleteFaculty,
+  assignCourses,
+  removeAssignedCourses,
 };
