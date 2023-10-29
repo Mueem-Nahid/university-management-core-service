@@ -5,11 +5,8 @@
    - Room
    - Course
 2. Intrgrate get data by id, filter data, update and delete functionalities in the following modules:
-   - Building (get data by id, update and delete data) X
-   - Room (Filter data, get data by id, update and delete) X
-   - Course (Filter data, get data by id, update and delete) X
-3. Add Zod validations in the following modules:
-   - Room X
-   - Course X
+   - semester registration - filter, get one by id, update , delete
+3. Add Zod validations and role in the following modules:
+   - semester registration
 
-- 37-9
+- 38-1
