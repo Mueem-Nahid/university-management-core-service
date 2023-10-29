@@ -12,4 +12,4 @@
    - Room X
    - Course X
 
-- 37-5\_ Faculty Remove from Designated Course
+- 37-8
