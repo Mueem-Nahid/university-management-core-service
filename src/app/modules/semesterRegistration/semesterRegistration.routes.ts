@@ -1,8 +1,27 @@
 import express from 'express';
 import { SemesterRegistrationController } from './semesterRegistration.controller';
+import validateRequest from '../../middlewares/validateRequest';
+import { SemesterRegistrationValidation } from './semesterRegistration.validation';
+import auth from '../../middlewares/auth';
+import { ENUM_USER_ROLE } from '../../../enums/user';
 
 const router = express.Router();
 
-router.post('/', SemesterRegistrationController.createSemesterRegistration);
+router.get('/', SemesterRegistrationController.getAllSemester);
+
+router.get('/:id', SemesterRegistrationController.getSingleSemester);
+
+router.post(
+  '/',
+  validateRequest(SemesterRegistrationValidation.create),
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  SemesterRegistrationController.createSemesterRegistration
+);
+
+router.delete(
+  '/:id',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  SemesterRegistrationController.deleteByIdFromDB
+);
 
 export const SemesterRegistrationRoutes = router;
