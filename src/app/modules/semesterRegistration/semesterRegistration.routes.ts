@@ -18,6 +18,11 @@ router.post(
   SemesterRegistrationController.createSemesterRegistration
 );
 
+router.patch(
+  '/',
+  SemesterRegistrationController.updateOneSemester
+);
+
 router.delete(
   '/:id',
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),

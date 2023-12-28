@@ -51,8 +51,8 @@ const getAllFromDB = async (
   filters: ISemesterRegistrationFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<SemesterRegistration[]>> => {
-  const { limit, page, skip } = paginationHelpers.calculatePagination(options);
-  const { searchTerm, ...filterData } = filters;
+  const {limit, page, skip} = paginationHelpers.calculatePagination(options);
+  const {searchTerm, ...filterData} = filters;
 
   const andConditions = [];
 
@@ -88,7 +88,7 @@ const getAllFromDB = async (
   }
 
   const whereConditions: Prisma.SemesterRegistrationWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
+    andConditions.length > 0 ? {AND: andConditions} : {};
 
   const result = await prisma.semesterRegistration.findMany({
     include: {
@@ -99,10 +99,10 @@ const getAllFromDB = async (
     take: limit,
     orderBy:
       options.sortBy && options.sortOrder
-        ? { [options.sortBy]: options.sortOrder }
+        ? {[options.sortBy]: options.sortOrder}
         : {
-            createdAt: 'desc',
-          },
+          createdAt: 'desc',
+        },
   });
   const total = await prisma.semesterRegistration.count({
     where: whereConditions,
@@ -132,6 +132,19 @@ const getByIdFromDB = async (
   return result;
 };
 
+const updateOneInDB = async (id: string, payload: Partial<SemesterRegistration>): Promise<SemesterRegistration> => {
+  const result = await prisma.semesterRegistration.update({
+    where: {
+      id
+    },
+    data: payload,
+    include: {
+      academicSemester: true,
+    }
+  });
+  return result;
+}
+
 const deleteByIdFromDB = async (id: string): Promise<SemesterRegistration> => {
   const result = await prisma.semesterRegistration.delete({
     where: {
@@ -149,4 +162,5 @@ export const SemesterRegistrationService = {
   getByIdFromDB,
   getAllFromDB,
   deleteByIdFromDB,
+  updateOneInDB,
 };
