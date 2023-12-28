@@ -9,4 +9,4 @@
 3. Add Zod validations and role in the following modules:
    - semester registration
 
-- 38-1
+- start from 38-2
