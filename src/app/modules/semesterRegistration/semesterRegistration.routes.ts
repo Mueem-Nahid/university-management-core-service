@@ -20,6 +20,8 @@ router.post(
 
 router.patch(
   '/',
+  validateRequest(SemesterRegistrationValidation.update),
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   SemesterRegistrationController.updateOneSemester
 );
 
