@@ -10,11 +10,23 @@ const createOfferedCourse = async (data: ICreateOfferedCourse): Promise<OfferedC
     courseId,
   }));
 
-  const offeredCourses = await prisma.offeredCourse.createMany({
+  // bulk insert
+  await prisma.offeredCourse.createMany({
     data: offeredCoursesData,
   });
 
-  return offeredCourses;
+  // Fetch the created courses
+  const createdCourses = await prisma.offeredCourse.findMany({
+    where: {
+      academicDepartmentId,
+      semesterRegistrationId,
+      courseId: {
+        in: courseIds,
+      },
+    },
+  });
+
+  return createdCourses;
 }
 
 export const OfferedCourseService = {
