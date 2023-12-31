@@ -56,6 +56,12 @@ const createOfferedCourse = async (data: ICreateOfferedCourse): Promise<OfferedC
   return createdCourses;
 }
 
+const getAllOfferedCourse = async (): Promise<OfferedCourse[]> => {
+  const result = await prisma.offeredCourse.findMany();
+  return result;
+}
+
 export const OfferedCourseService = {
-  createOfferedCourse
+  createOfferedCourse,
+  getAllOfferedCourse
 }

@@ -12,4 +12,7 @@ router.post('/',
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   OfferedCourseController.createOfferedCourse);
 
+router.get('/',
+  OfferedCourseController.getAllOfferedCourse);
+
 export const OfferedCourseRoutes = router;
