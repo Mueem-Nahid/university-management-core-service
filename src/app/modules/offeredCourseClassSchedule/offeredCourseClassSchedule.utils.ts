@@ -30,6 +30,33 @@ const checkRoomAvailability = async (data: OfferedCourseClassSchedule) => {
   }
 };
 
+const checkFacultyAvailability = async (data: OfferedCourseClassSchedule) => {
+  const isFacusltyAlreadyAssigned = await prisma.offeredCourseClassSchedule.findMany({
+    where: {
+      dayOfWeek: data.dayOfWeek,
+      faculty: {
+        id: data.facultyId
+      }
+    },
+    select: {
+      startTime: true,
+      endTime: true,
+      dayOfWeek: true
+    }
+  });
+
+  const newSlot = {
+    startTime: data.startTime,
+    endTime: data.endTime,
+    dayOfWeek: data.dayOfWeek
+  };
+
+  if (hasTimeConflict(isFacusltyAlreadyAssigned, newSlot)) {
+    throw new ApiError(httpStatus.CONFLICT, 'Faculty is already assigned.');
+  }
+}
+
 export const OfferedCourseClassScheduleUtils = {
   checkRoomAvailability,
+  checkFacultyAvailability
 };

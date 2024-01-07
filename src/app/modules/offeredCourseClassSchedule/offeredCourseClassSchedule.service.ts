@@ -12,7 +12,11 @@ import {
 import { IOfferedCourseClassScheduleFilterRequest } from './offeredCourseClassSchedule.interface';
 
 const createClassSchedule = async (data: OfferedCourseClassSchedule): Promise<OfferedCourseClassSchedule> => {
-  await OfferedCourseClassScheduleUtils.checkRoomAvailability(data);
+  // Execute both asynchronous checks concurrently
+  await Promise.all([
+    OfferedCourseClassScheduleUtils.checkRoomAvailability(data),
+    OfferedCourseClassScheduleUtils.checkFacultyAvailability(data)
+  ]);
 
   return prisma.offeredCourseClassSchedule.create({
     data,

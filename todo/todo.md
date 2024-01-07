@@ -5,4 +5,4 @@
 3. Add Zod validations and role in the following modules:
    - 
 
-- start from 39.6 - 
+- start from 39.7 - 
