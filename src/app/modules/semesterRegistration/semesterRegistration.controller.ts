@@ -16,7 +16,7 @@ const createSemesterRegistration = catchAsync(
       statusCode: httpStatus.CREATED,
       success: true,
       message: 'Semester successfully registered.',
-      data: result,
+      data: result
     });
   }
 );
@@ -33,40 +33,45 @@ const getAllSemester = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: 'All semesters.',
     meta: result.meta,
-    data: result.data,
+    data: result.data
   });
 });
 
 const getSingleSemester = catchAsync(async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const result = await SemesterRegistrationService.getByIdFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Ok',
-    data: result,
+    data: result
   });
 });
 
 const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const result = await SemesterRegistrationService.deleteByIdFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.NO_CONTENT,
     success: true,
-    data: result,
+    data: result
   });
 });
 
 const updateOneSemester = catchAsync(async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const result = await SemesterRegistrationService.updateOneInDB(id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Semester registration updated successfully.',
-    data: result,
+    data: result
   });
+});
+
+const startMyRegistration = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  console.log(user);
 });
 
 export const SemesterRegistrationController = {
@@ -74,5 +79,6 @@ export const SemesterRegistrationController = {
   getAllSemester,
   getSingleSemester,
   deleteByIdFromDB,
-  updateOneSemester
+  updateOneSemester,
+  startMyRegistration
 };
