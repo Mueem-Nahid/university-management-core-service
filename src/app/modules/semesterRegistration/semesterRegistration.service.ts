@@ -51,8 +51,8 @@ const getAllFromDB = async (
   filters: ISemesterRegistrationFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<SemesterRegistration[]>> => {
-  const {limit, page, skip} = paginationHelpers.calculatePagination(options);
-  const {searchTerm, ...filterData} = filters;
+  const { limit, page, skip } = paginationHelpers.calculatePagination(options);
+  const { searchTerm, ...filterData } = filters;
 
   const andConditions = [];
 
@@ -88,7 +88,7 @@ const getAllFromDB = async (
   }
 
   const whereConditions: Prisma.SemesterRegistrationWhereInput =
-    andConditions.length > 0 ? {AND: andConditions} : {};
+    andConditions.length > 0 ? { AND: andConditions } : {};
 
   const result = await prisma.semesterRegistration.findMany({
     include: {
@@ -99,10 +99,10 @@ const getAllFromDB = async (
     take: limit,
     orderBy:
       options.sortBy && options.sortOrder
-        ? {[options.sortBy]: options.sortOrder}
+        ? { [options.sortBy]: options.sortOrder }
         : {
-          createdAt: 'desc',
-        },
+            createdAt: 'desc',
+          },
   });
   const total = await prisma.semesterRegistration.count({
     where: whereConditions,
@@ -132,35 +132,52 @@ const getByIdFromDB = async (
   return result;
 };
 
-const updateOneInDB = async (id: string, payload: Partial<SemesterRegistration>): Promise<SemesterRegistration> => {
+const updateOneInDB = async (
+  id: string,
+  payload: Partial<SemesterRegistration>
+): Promise<SemesterRegistration> => {
   const isExist = await prisma.semesterRegistration.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!isExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Data not found.");
+    throw new ApiError(httpStatus.NOT_FOUND, 'Data not found.');
   }
 
   // status can be only updated in this manner: UPCOMING > ONGOING > ENDED
-  if (payload?.status && isExist.status === SemesterRegistrationStatus.UPCOMING && payload?.status !== SemesterRegistrationStatus.ONGOING)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Status can be moved from upcoming to ongoing.");
+  if (
+    payload?.status &&
+    isExist.status === SemesterRegistrationStatus.UPCOMING &&
+    payload?.status !== SemesterRegistrationStatus.ONGOING
+  )
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Status can be moved from upcoming to ongoing.'
+    );
 
-  if (payload?.status && isExist.status === SemesterRegistrationStatus.ONGOING && payload?.status !== SemesterRegistrationStatus.ENDED)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Status can be moved from ongoing to ended.");
+  if (
+    payload?.status &&
+    isExist.status === SemesterRegistrationStatus.ONGOING &&
+    payload?.status !== SemesterRegistrationStatus.ENDED
+  )
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Status can be moved from ongoing to ended.'
+    );
 
   const result = await prisma.semesterRegistration.update({
     where: {
-      id
+      id,
     },
     data: payload,
     include: {
       academicSemester: true,
-    }
+    },
   });
   return result;
-}
+};
 
 const deleteByIdFromDB = async (id: string): Promise<SemesterRegistration> => {
   const result = await prisma.semesterRegistration.delete({

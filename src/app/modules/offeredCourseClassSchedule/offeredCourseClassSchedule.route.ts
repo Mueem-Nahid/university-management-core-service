@@ -5,6 +5,9 @@ const router = express.Router();
 
 router.post('/', OfferedCourseClassScheduleController.createClassSchedule);
 
-router.get('/', OfferedCourseClassScheduleController.getAllOfferedCourseClassSchedule);
+router.get(
+  '/',
+  OfferedCourseClassScheduleController.getAllOfferedCourseClassSchedule
+);
 
 export const OfferedCourseClassScheduleRoutes = router;

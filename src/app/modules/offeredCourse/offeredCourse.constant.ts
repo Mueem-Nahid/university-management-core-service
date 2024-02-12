@@ -3,7 +3,7 @@ export const offeredCourseFilterableFields: string[] = [
   'id',
   'semesterRegistrationId',
   'courseId',
-  'academicDepartmentId'
+  'academicDepartmentId',
 ];
 
 export const offeredCourseSearchableFields: string[] = [];
@@ -11,10 +11,10 @@ export const offeredCourseSearchableFields: string[] = [];
 export const offeredCourseRelationalFields: string[] = [
   'semesterRegistrationId',
   'courseId',
-  'academicDepartmentId'
+  'academicDepartmentId',
 ];
 export const offeredCourseRelationalFieldsMapper: { [key: string]: string } = {
   semesterRegistrationId: 'semesterRegistration',
   courseId: 'course',
-  academicDepartmentId: 'academicDepartment'
+  academicDepartmentId: 'academicDepartment',
 };

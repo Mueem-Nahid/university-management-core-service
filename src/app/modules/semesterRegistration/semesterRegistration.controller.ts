@@ -16,7 +16,7 @@ const createSemesterRegistration = catchAsync(
       statusCode: httpStatus.CREATED,
       success: true,
       message: 'Semester successfully registered.',
-      data: result
+      data: result,
     });
   }
 );
@@ -33,7 +33,7 @@ const getAllSemester = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: 'All semesters.',
     meta: result.meta,
-    data: result.data
+    data: result.data,
   });
 });
 
@@ -44,7 +44,7 @@ const getSingleSemester = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Ok',
-    data: result
+    data: result,
   });
 });
 
@@ -54,7 +54,7 @@ const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.NO_CONTENT,
     success: true,
-    data: result
+    data: result,
   });
 });
 
@@ -65,7 +65,7 @@ const updateOneSemester = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Semester registration updated successfully.',
-    data: result
+    data: result,
   });
 });
 
@@ -80,5 +80,5 @@ export const SemesterRegistrationController = {
   getSingleSemester,
   deleteByIdFromDB,
   updateOneSemester,
-  startMyRegistration
+  startMyRegistration,
 };

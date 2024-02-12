@@ -8,11 +8,9 @@ import { BuildingRoutes } from '../modules/building/building.route';
 import { RoomRoutes } from '../modules/room/room.routes';
 import { CourseRoutes } from '../modules/course/course.routes';
 import { SemesterRegistrationRoutes } from '../modules/semesterRegistration/semesterRegistration.routes';
-import { OfferedCourseRoutes } from "../modules/offeredCourse/offeredCourse.route";
-import { OfferedCourseSectionRoutes } from "../modules/offeredCourseSection/offeredCourseSection.route";
-import {
-  OfferedCourseClassScheduleRoutes
-} from "../modules/offeredCourseClassSchedule/offeredCourseClassSchedule.route";
+import { OfferedCourseRoutes } from '../modules/offeredCourse/offeredCourse.route';
+import { OfferedCourseSectionRoutes } from '../modules/offeredCourseSection/offeredCourseSection.route';
+import { OfferedCourseClassScheduleRoutes } from '../modules/offeredCourseClassSchedule/offeredCourseClassSchedule.route';
 
 const router = express.Router();
 

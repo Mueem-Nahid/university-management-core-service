@@ -2,18 +2,20 @@ export const offeredCourseSectionFilterableFields: string[] = [
   'searchTerm',
   'id',
   'offeredCourseId',
-  'semesterRegistrationId'
+  'semesterRegistrationId',
 ];
 
 export const offeredCourseSectionSearchableFields: string[] = [];
 
 export const offeredCourseSectionRelationalFields: string[] = [
   'offeredCourseId',
-  'semesterRegistrationId'
+  'semesterRegistrationId',
 ];
-export const offeredCourseSectionRelationalFieldsMapper: { [key: string]: string } = {
+export const offeredCourseSectionRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   offeredCourseId: 'offeredCourse',
-  semesterRegistrationId: 'semesterRegistration'
+  semesterRegistrationId: 'semesterRegistration',
 };
 
 export const daysInWeek = [
@@ -23,5 +25,5 @@ export const daysInWeek = [
   'TUESDAY',
   'WEDNESDAY',
   'THURSDAY',
-  'FRIDAY'
+  'FRIDAY',
 ];

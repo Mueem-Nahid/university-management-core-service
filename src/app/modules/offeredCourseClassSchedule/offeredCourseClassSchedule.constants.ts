@@ -4,12 +4,14 @@ export const offeredCourseClassScheduleRelationalFields = [
   'offeredCourseSectionId',
   'semesterRegistrationId',
   'roomId',
-  'facultyId'
+  'facultyId',
 ];
 
-export const offeredCourseClassScheduleRelationalFieldsMapper: { [key: string]: string } = {
+export const offeredCourseClassScheduleRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   offeredCourseSectionId: 'offeredCourseSection',
   semesterRegistrationId: 'semesterRegistration',
   roomId: 'room',
-  facultyId: 'faculty'
+  facultyId: 'faculty',
 };

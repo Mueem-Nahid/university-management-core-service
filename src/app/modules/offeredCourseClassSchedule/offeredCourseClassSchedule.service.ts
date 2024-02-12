@@ -7,15 +7,17 @@ import { paginationHelpers } from '../../../helpers/paginationHelper';
 import {
   offeredCourseClassScheduleRelationalFields,
   offeredCourseClassScheduleRelationalFieldsMapper,
-  offeredCourseClassScheduleSearchableFields
+  offeredCourseClassScheduleSearchableFields,
 } from './offeredCourseClassSchedule.constants';
 import { IOfferedCourseClassScheduleFilterRequest } from './offeredCourseClassSchedule.interface';
 
-const createClassSchedule = async (data: OfferedCourseClassSchedule): Promise<OfferedCourseClassSchedule> => {
+const createClassSchedule = async (
+  data: OfferedCourseClassSchedule
+): Promise<OfferedCourseClassSchedule> => {
   // Execute both asynchronous checks concurrently
   await Promise.all([
     OfferedCourseClassScheduleUtils.checkRoomAvailability(data),
-    OfferedCourseClassScheduleUtils.checkFacultyAvailability(data)
+    OfferedCourseClassScheduleUtils.checkFacultyAvailability(data),
   ]);
 
   return prisma.offeredCourseClassSchedule.create({
@@ -24,13 +26,15 @@ const createClassSchedule = async (data: OfferedCourseClassSchedule): Promise<Of
       semesterRegistration: true,
       offeredCourseSection: true,
       room: true,
-      faculty: true
-    }
+      faculty: true,
+    },
   });
 };
 
-const getAllOfferedCourseSchedule = async (filters: IOfferedCourseClassScheduleFilterRequest, options: IPaginationOptions):
-  Promise<IGenericResponse<OfferedCourseClassSchedule[]>> => {
+const getAllOfferedCourseSchedule = async (
+  filters: IOfferedCourseClassScheduleFilterRequest,
+  options: IPaginationOptions
+): Promise<IGenericResponse<OfferedCourseClassSchedule[]>> => {
   const { limit, page, skip } = paginationHelpers.calculatePagination(options);
   const { searchTerm, ...filterData } = filters;
 
@@ -38,32 +42,32 @@ const getAllOfferedCourseSchedule = async (filters: IOfferedCourseClassScheduleF
 
   if (searchTerm) {
     andConditions.push({
-      OR: offeredCourseClassScheduleSearchableFields.map((field) => ({
+      OR: offeredCourseClassScheduleSearchableFields.map(field => ({
         [field]: {
           contains: searchTerm,
-          mode: 'insensitive'
-        }
-      }))
+          mode: 'insensitive',
+        },
+      })),
     });
   }
 
   if (Object.keys(filterData).length > 0) {
     andConditions.push({
-      AND: Object.keys(filterData).map((key) => {
+      AND: Object.keys(filterData).map(key => {
         if (offeredCourseClassScheduleRelationalFields.includes(key)) {
           return {
             [offeredCourseClassScheduleRelationalFieldsMapper[key]]: {
-              id: (filterData as any)[key]
-            }
+              id: (filterData as any)[key],
+            },
           };
         } else {
           return {
             [key]: {
-              equals: (filterData as any)[key]
-            }
+              equals: (filterData as any)[key],
+            },
           };
         }
-      })
+      }),
     });
   }
 
@@ -75,7 +79,7 @@ const getAllOfferedCourseSchedule = async (filters: IOfferedCourseClassScheduleF
       faculty: true,
       room: true,
       semesterRegistration: true,
-      offeredCourseSection: true
+      offeredCourseSection: true,
     },
     where: whereConditions,
     skip,
@@ -84,24 +88,24 @@ const getAllOfferedCourseSchedule = async (filters: IOfferedCourseClassScheduleF
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-          createdAt: 'desc'
-        }
+            createdAt: 'desc',
+          },
   });
   const total = await prisma.offeredCourseClassSchedule.count({
-    where: whereConditions
+    where: whereConditions,
   });
 
   return {
     meta: {
       total,
       page,
-      limit
+      limit,
     },
-    data: result
+    data: result,
   };
 };
 
 export const OfferedCourseClassScheduleService = {
   createClassSchedule,
-  getAllOfferedCourseSchedule
+  getAllOfferedCourseSchedule,
 };

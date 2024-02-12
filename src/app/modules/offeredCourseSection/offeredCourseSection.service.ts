@@ -1,30 +1,35 @@
-import { OfferedCourseSection, Prisma } from "@prisma/client";
-import prisma from "../../../shared/prisma";
-import ApiError from "../../../errors/ApiError";
-import httpStatus from "http-status";
+import { OfferedCourseSection, Prisma } from '@prisma/client';
+import prisma from '../../../shared/prisma';
+import ApiError from '../../../errors/ApiError';
+import httpStatus from 'http-status';
 import {
   offeredCourseSectionRelationalFields,
   offeredCourseSectionRelationalFieldsMapper,
-  offeredCourseSectionSearchableFields
-} from "./offeredCourseSection.constant";
-import { paginationHelpers } from "../../../helpers/paginationHelper";
-import { IGenericResponse } from "../../../interfaces/common";
-import { IPaginationOptions } from "../../../interfaces/pagination";
-import { IOfferedCourseSectionFilterRequest } from "./offeredCourseSection.interface";
+  offeredCourseSectionSearchableFields,
+} from './offeredCourseSection.constant';
+import { paginationHelpers } from '../../../helpers/paginationHelper';
+import { IGenericResponse } from '../../../interfaces/common';
+import { IPaginationOptions } from '../../../interfaces/pagination';
+import { IOfferedCourseSectionFilterRequest } from './offeredCourseSection.interface';
 
-const createOfferedCourseSection = async (data: OfferedCourseSection): Promise<OfferedCourseSection> => {
+const createOfferedCourseSection = async (
+  data: OfferedCourseSection
+): Promise<OfferedCourseSection> => {
   const isOfferedCourseExist = await prisma.offeredCourse.findFirst({
     where: {
-      id: data.offeredCourseId
-    }
+      id: data.offeredCourseId,
+    },
   });
   if (!isOfferedCourseExist)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Offered course does not exist.");
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Offered course does not exist.'
+    );
 
   data.semesterRegistrationId = isOfferedCourseExist.semesterRegistrationId;
 
   const result = await prisma.offeredCourseSection.create({
-    data
+    data,
   });
   return result;
 };
@@ -33,44 +38,44 @@ const getAllFromDB = async (
   filters: IOfferedCourseSectionFilterRequest,
   options: IPaginationOptions
 ): Promise<IGenericResponse<OfferedCourseSection[]>> => {
-  const {limit, page, skip} = paginationHelpers.calculatePagination(options);
-  const {searchTerm, ...filterData} = filters;
+  const { limit, page, skip } = paginationHelpers.calculatePagination(options);
+  const { searchTerm, ...filterData } = filters;
 
   const andConditions = [];
 
   if (searchTerm) {
     andConditions.push({
-      OR: offeredCourseSectionSearchableFields.map((field) => ({
+      OR: offeredCourseSectionSearchableFields.map(field => ({
         [field]: {
           contains: searchTerm,
-          mode: 'insensitive'
-        }
-      }))
+          mode: 'insensitive',
+        },
+      })),
     });
   }
 
   if (Object.keys(filterData).length > 0) {
     andConditions.push({
-      AND: Object.keys(filterData).map((key) => {
+      AND: Object.keys(filterData).map(key => {
         if (offeredCourseSectionRelationalFields.includes(key)) {
           return {
             [offeredCourseSectionRelationalFieldsMapper[key]]: {
-              id: (filterData as any)[key]
-            }
+              id: (filterData as any)[key],
+            },
           };
         } else {
           return {
             [key]: {
-              equals: (filterData as any)[key]
-            }
+              equals: (filterData as any)[key],
+            },
           };
         }
-      })
+      }),
     });
   }
 
   const whereConditions: Prisma.OfferedCourseSectionWhereInput =
-    andConditions.length > 0 ? {AND: andConditions} : {};
+    andConditions.length > 0 ? { AND: andConditions } : {};
 
   const result = await prisma.offeredCourseSection.findMany({
     where: whereConditions,
@@ -78,44 +83,46 @@ const getAllFromDB = async (
     take: limit,
     orderBy:
       options.sortBy && options.sortOrder
-        ? {[options.sortBy]: options.sortOrder}
+        ? { [options.sortBy]: options.sortOrder }
         : {
-          createdAt: 'desc'
-        },
+            createdAt: 'desc',
+          },
     include: {
       offeredCourse: {
         include: {
-          course: true
-        }
-      }
+          course: true,
+        },
+      },
     },
   });
   const total = await prisma.offeredCourseSection.count({
-    where: whereConditions
+    where: whereConditions,
   });
 
   return {
     meta: {
       total,
       page,
-      limit
+      limit,
     },
-    data: result
+    data: result,
   };
 };
 
-const getByIdFromDB = async (id: string): Promise<OfferedCourseSection | null> => {
+const getByIdFromDB = async (
+  id: string
+): Promise<OfferedCourseSection | null> => {
   const result = await prisma.offeredCourseSection.findUnique({
     where: {
-      id
+      id,
     },
     include: {
       offeredCourse: {
         include: {
-          course: true
-        }
-      }
-    }
+          course: true,
+        },
+      },
+    },
   });
   return result;
 };
@@ -127,16 +134,16 @@ const updateOneInDB = async (
   //update
   const result = await prisma.offeredCourseSection.update({
     where: {
-      id
+      id,
     },
     data: payload,
     include: {
       offeredCourse: {
         include: {
-          course: true
-        }
-      }
-    }
+          course: true,
+        },
+      },
+    },
   });
   return result;
 };
@@ -144,15 +151,15 @@ const updateOneInDB = async (
 const deleteByIdFromDB = async (id: string): Promise<OfferedCourseSection> => {
   const result = await prisma.offeredCourseSection.delete({
     where: {
-      id
+      id,
     },
     include: {
       offeredCourse: {
         include: {
-          course: true
-        }
-      }
-    }
+          course: true,
+        },
+      },
+    },
   });
   return result;
 };
@@ -162,5 +169,5 @@ export const OfferedCourseSectionService = {
   getAllFromDB,
   getByIdFromDB,
   updateOneInDB,
-  deleteByIdFromDB
-}
+  deleteByIdFromDB,
+};

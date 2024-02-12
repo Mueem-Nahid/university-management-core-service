@@ -1,7 +1,7 @@
 export type ICreateOfferedCourse = {
-  academicDepartmentId: string,
-  semesterRegistrationId: string,
-  courseIds: string[]
+  academicDepartmentId: string;
+  semesterRegistrationId: string;
+  courseIds: string[];
 };
 
 export type IOfferedCourseFilterRequest = {
@@ -9,4 +9,4 @@ export type IOfferedCourseFilterRequest = {
   semesterRegistrationId?: string | undefined;
   courseId?: string | undefined;
   academicDepartmentId?: string | undefined;
-}
+};

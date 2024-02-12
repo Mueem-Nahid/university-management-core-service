@@ -1,4 +1,4 @@
-import { WeekDays } from "@prisma/client";
+import { WeekDays } from '@prisma/client';
 
 export const asyncForEach = async (array: any[], callback: any) => {
   if (!Array.isArray(array)) {
@@ -10,19 +10,32 @@ export const asyncForEach = async (array: any[], callback: any) => {
 };
 
 export const hasTimeConflict = (
-  alreadyBookedRoom: {startTime: string, endTime: string, dayOfWeek: WeekDays}[],
-  newSlot: {startTime:string, endTime: string, dayOfWeek: WeekDays}
-  ) => {
-    for (const slot of alreadyBookedRoom) {
-      const formattedExistingStartTime = new Date(`1970-01-01T${slot.startTime}:00`);
-      const formattedExistingEndTime = new Date(`1970-01-01T${slot.startTime}:00`);
-      const formattedNewStartTime = new Date(`1970-01-01T${newSlot.startTime}:00`);
-      const formattedNewEndTime = new Date(`1970-01-01T${newSlot.startTime}:00`);
-    
-      if(formattedNewStartTime < formattedExistingEndTime && formattedNewEndTime > formattedExistingStartTime){
-        return true;
-      }
-      
-      return false;
+  alreadyBookedRoom: {
+    startTime: string;
+    endTime: string;
+    dayOfWeek: WeekDays;
+  }[],
+  newSlot: { startTime: string; endTime: string; dayOfWeek: WeekDays }
+) => {
+  for (const slot of alreadyBookedRoom) {
+    const formattedExistingStartTime = new Date(
+      `1970-01-01T${slot.startTime}:00`
+    );
+    const formattedExistingEndTime = new Date(
+      `1970-01-01T${slot.startTime}:00`
+    );
+    const formattedNewStartTime = new Date(
+      `1970-01-01T${newSlot.startTime}:00`
+    );
+    const formattedNewEndTime = new Date(`1970-01-01T${newSlot.startTime}:00`);
+
+    if (
+      formattedNewStartTime < formattedExistingEndTime &&
+      formattedNewEndTime > formattedExistingStartTime
+    ) {
+      return true;
     }
-}
+
+    return false;
+  }
+};

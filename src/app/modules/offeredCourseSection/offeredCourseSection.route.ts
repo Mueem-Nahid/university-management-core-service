@@ -1,16 +1,18 @@
-import express from "express";
-import { OfferedCourseSectionController } from "./offeredCourseSection.controller";
-import { ENUM_USER_ROLE } from "../../../enums/user";
-import auth from "../../middlewares/auth";
-import validateRequest from "../../middlewares/validateRequest";
-import { OfferedCourseSectionValidation } from "./offeredCourseSection.validation";
+import express from 'express';
+import { OfferedCourseSectionController } from './offeredCourseSection.controller';
+import { ENUM_USER_ROLE } from '../../../enums/user';
+import auth from '../../middlewares/auth';
+import validateRequest from '../../middlewares/validateRequest';
+import { OfferedCourseSectionValidation } from './offeredCourseSection.validation';
 
 const router = express.Router();
 
-router.post('/',
+router.post(
+  '/',
   validateRequest(OfferedCourseSectionValidation.create),
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-  OfferedCourseSectionController.createOfferedCourseSection);
+  OfferedCourseSectionController.createOfferedCourseSection
+);
 
 router.patch(
   '/:id',
