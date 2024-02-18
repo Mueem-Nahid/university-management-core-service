@@ -2,6 +2,7 @@ import {
   Prisma,
   SemesterRegistration,
   SemesterRegistrationStatus,
+  StudentSemesterRegistration,
 } from '@prisma/client';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../../errors/ApiError';
@@ -191,7 +192,12 @@ const deleteByIdFromDB = async (id: string): Promise<SemesterRegistration> => {
   return result;
 };
 
-const startMyRegistration = async (authUserId: string) => {
+const startMyRegistration = async (
+  authUserId: string
+): Promise<{
+  semesterRegistration: SemesterRegistration | null;
+  studentSemesterRegistration: StudentSemesterRegistration | null;
+}> => {
   const studentInfo = await prisma.student.findFirst({
     where: {
       studentId: authUserId,
@@ -210,7 +216,6 @@ const startMyRegistration = async (authUserId: string) => {
       },
     },
   });
-  console.log(semesterRegInfo);
 
   if (semesterRegInfo?.status === SemesterRegistrationStatus.UPCOMING) {
     throw new ApiError(
@@ -219,22 +224,40 @@ const startMyRegistration = async (authUserId: string) => {
     );
   }
 
-  const studentRegistration = await prisma.studentSemesterRegistration.create({
-    data: {
-      student: {
-        connect: {
+  let studentSemesterRegistration =
+    await prisma.studentSemesterRegistration.findFirst({
+      where: {
+        student: {
           id: studentInfo?.id,
         },
-      },
-      semesterRegistration: {
-        connect: {
+        semesterRegistration: {
           id: semesterRegInfo?.id,
         },
       },
-    },
-  });
+    });
 
-  return studentRegistration;
+  if (!studentSemesterRegistration) {
+    studentSemesterRegistration =
+      await prisma.studentSemesterRegistration.create({
+        data: {
+          student: {
+            connect: {
+              id: studentInfo?.id,
+            },
+          },
+          semesterRegistration: {
+            connect: {
+              id: semesterRegInfo?.id,
+            },
+          },
+        },
+      });
+  }
+
+  return {
+    semesterRegistration: semesterRegInfo,
+    studentSemesterRegistration,
+  };
 };
 
 export const SemesterRegistrationService = {
