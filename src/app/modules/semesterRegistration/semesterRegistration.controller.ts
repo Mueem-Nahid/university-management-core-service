@@ -80,6 +80,17 @@ const startMyRegistration = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const enrollIntoCourse = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Semester registration started successfully.',
+    data: {},
+  });
+});
+
 export const SemesterRegistrationController = {
   createSemesterRegistration,
   getAllSemester,
@@ -87,4 +98,5 @@ export const SemesterRegistrationController = {
   deleteByIdFromDB,
   updateOneSemester,
   startMyRegistration,
+  enrollIntoCourse,
 };
