@@ -3,4 +3,4 @@
    - (get single, update and delete)
 3. ## Add Zod validations and role in the following modules:
 
-- start from 41.3 -
+- start from 41.6 - Implementing Zod Validation For Course Enrollment And Withdrawal, And File Structure Organization
