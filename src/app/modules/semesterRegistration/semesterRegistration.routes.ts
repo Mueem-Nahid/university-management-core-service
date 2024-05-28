@@ -43,4 +43,10 @@ router.post(
   SemesterRegistrationController.enrollIntoCourse
 );
 
+router.post(
+  '/withdraw-from-course',
+  auth(ENUM_USER_ROLE.STUDENT),
+  SemesterRegistrationController.withdrawFromCourse
+);
+
 export const SemesterRegistrationRoutes = router;
