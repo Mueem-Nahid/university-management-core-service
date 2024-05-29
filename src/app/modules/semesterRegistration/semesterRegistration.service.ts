@@ -272,6 +272,67 @@ const withdrawFromCourse = async (
   return StudentSemesterRegistrationCourseService.withdrawFromCourse(authUserId, payload);
 };
 
+const confirmMyRegistration = async (authUserId: string) => {
+  const semesterRegistration = await prisma.semesterRegistration.findFirst({
+    where: {
+      status: SemesterRegistrationStatus.ONGOING
+    },
+    select: {
+      id: true,
+      minCredit: true,
+      maxCredit: true,
+    }
+  });
+
+  if(!semesterRegistration) {
+     throw new ApiError(httpStatus.NOT_FOUND, "No ongoing semester found.");
+  }
+
+  const studentSemesterRegistration = await prisma.studentSemesterRegistration.findFirst({
+    where: {
+      semesterRegistration: {
+        id: semesterRegistration?.id
+      },
+      student: {
+        studentId: authUserId
+      }
+    },
+    select: {
+      id: true,
+      totalCreditsTaken: true,
+    }
+  });
+
+  if(!studentSemesterRegistration) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "You are not recognized to this semester registration.");
+  }
+
+  if(studentSemesterRegistration?.totalCreditsTaken === 0) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "You did not enroll any course.");
+  }
+
+  if(
+    studentSemesterRegistration?.totalCreditsTaken &&
+    (studentSemesterRegistration?.totalCreditsTaken < semesterRegistration?.minCredit ||
+    studentSemesterRegistration?.totalCreditsTaken > semesterRegistration?.maxCredit)
+  ) {
+    throw new ApiError(httpStatus.BAD_REQUEST, `Minimum ${semesterRegistration?.minCredit} credits to maximum ${semesterRegistration?.maxCredit} credits are allowed.`);
+  }
+
+  await prisma.studentSemesterRegistration.update({
+    where: {
+      id: studentSemesterRegistration.id
+    },
+    data: {
+      isConfirmed: true
+    }
+  });
+
+  return {
+    message: "Registration confirmed successfully.",
+  }
+}
+
 export const SemesterRegistrationService = {
   createSemesterRegistration,
   getByIdFromDB,
@@ -280,5 +341,6 @@ export const SemesterRegistrationService = {
   updateOneInDB,
   startMyRegistration,
   enrollIntoCourse,
-  withdrawFromCourse
+  withdrawFromCourse,
+  confirmMyRegistration,
 };
