@@ -3,4 +3,4 @@
    - (get single, update and delete)
 3. ## Add Zod validations and role in the following modules:
 
-- start from 41.9 - Retrieving My Registration Data
+- start from 42-1_ Add Start New Semester Functionality - Part 1
