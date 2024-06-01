@@ -432,6 +432,7 @@ const startNewSemester = async (id: string) => {
             }
           },
         });
+        console.log(studentSemesterRegistrationCourses)
       }
     );
 
