@@ -1,4 +1,11 @@
-import {Prisma, SemesterRegistration, SemesterRegistrationStatus, StudentSemesterRegistration,} from '@prisma/client';
+import {
+  Course,
+  OfferedCourse,
+  Prisma,
+  SemesterRegistration,
+  SemesterRegistrationStatus,
+  StudentSemesterRegistration,
+} from '@prisma/client';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../../errors/ApiError';
 import httpStatus from 'http-status';
@@ -432,7 +439,36 @@ const startNewSemester = async (id: string) => {
             }
           },
         });
-        console.log(studentSemesterRegistrationCourses)
+
+        await asyncForEach(
+          studentSemesterRegistrationCourses,
+          async (item: StudentSemesterRegistration & {
+            offeredCourse: OfferedCourse & {
+              course: Course
+            }
+          }) => {
+            const alreadyEnrolledData = await prisma.studentEnrolledCourse.findFirst({
+              where: {
+                studentId: item.studentId,
+                courseId: item.offeredCourse.courseId,
+                academicSemesterId: semesterRegistration.academicSemesterId,
+              }
+            });
+
+            if (!alreadyEnrolledData) {
+              const enrolledCourseDetails = {
+                studentId: item.studentId,
+                courseId: item.offeredCourse.courseId,
+                academicSemesterId: semesterRegistration.academicSemesterId,
+              };
+
+              await prisma.studentEnrolledCourse.create({
+                data: enrolledCourseDetails,
+              });
+            }
+
+          }
+        )
       }
     );
 
