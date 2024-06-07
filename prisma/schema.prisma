@@ -11,18 +11,20 @@ datasource db {
 }
 
 model AcademicSemester {
-  id                    String                  @id @default(uuid())
-  year                  Int
-  title                 String
-  code                  String
-  startMonth            String
-  endMonth              String
-  isCurrent             Boolean?                @default(false)
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  student               Student[]
-  semesterRegistrations SemesterRegistration[]
-  studentEnrolledCourse StudentEnrolledCourse[]
+  id                        String                      @id @default(uuid())
+  year                      Int
+  title                     String
+  code                      String
+  startMonth                String
+  endMonth                  String
+  isCurrent                 Boolean?                    @default(false)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  student                   Student[]
+  semesterRegistrations     SemesterRegistration[]
+  studentEnrolledCourse     StudentEnrolledCourse[]
+  studentEnrolledCourseMark StudentEnrolledCourseMark[]
+  studentSemesterPayment    StudentSemesterPayment[]
 
   @@map("academic_semester")
 }
@@ -79,6 +81,8 @@ model Student {
   studentSemesterRegistrations      StudentSemesterRegistration[]
   studentSemesterRegistrationCourse StudentSemesterRegistrationCourse[]
   studentEnrolledCourse             StudentEnrolledCourse[]
+  studentEnrolledCourseMark         StudentEnrolledCourseMark[]
+  studentSemesterPayment            StudentSemesterPayment[]
 
   @@map("student")
 }
@@ -314,12 +318,13 @@ model StudentEnrolledCourse {
   academicSemesterId String
   academicSemester   AcademicSemester @relation(fields: [academicSemesterId], references: [id])
 
-  grade      String?
-  point      Float?                        @default(0)
-  totalMarks Int?                          @default(0)
-  status     SemesterEnrolledCourseStatus? @default(ONGOING)
-  createdAt  DateTime                      @default(now())
-  updatedAt  DateTime                      @updatedAt
+  grade                     String?
+  point                     Float?                        @default(0)
+  totalMarks                Int?                          @default(0)
+  status                    SemesterEnrolledCourseStatus? @default(ONGOING)
+  createdAt                 DateTime                      @default(now())
+  updatedAt                 DateTime                      @updatedAt
+  studentEnrolledCourseMark StudentEnrolledCourseMark[]
 
   @@map("student_enrolled_course")
 }
@@ -328,4 +333,56 @@ enum SemesterEnrolledCourseStatus {
   UPCOMING
   ONGOING
   ENDED
+}
+
+model StudentEnrolledCourseMark {
+  id        String  @id @default(uuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  studentEnrolledCourseId String
+  studentEnrolledCourse   StudentEnrolledCourse @relation(fields: [studentEnrolledCourseId], references: [id])
+
+  academicSemesterId String
+  academicSemester   AcademicSemester @relation(fields: [academicSemesterId], references: [id])
+
+  grade    String?
+  marks    Int?
+  examType ExamType? @default(MIDTERM)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("student_enrolled_course_mark")
+}
+
+enum ExamType {
+  MIDTERM
+  FINAL
+}
+
+model StudentSemesterPayment {
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  academicSemesterId String
+  academicSemester   AcademicSemester @relation(fields: [academicSemesterId], references: [id])
+
+  fullPaymentAmount    Int?           @default(0)
+  partialPaymentAmount Int            @default(0)
+  totalPaidAmount      Int?           @default(0)
+  paymentStatus        PaymentStatus? @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("student_semester_payment")
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL_PAID
+  FULL_PAID
 }
