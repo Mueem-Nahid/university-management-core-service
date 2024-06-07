@@ -3,4 +3,4 @@
    - (get single, update and delete)
 3. ## Add Zod validations and role in the following modules:
 
-- start from 42-6_ Designing Models For Student Enrolled Course Marks And Student Semester Payments
+- start from 42-7
