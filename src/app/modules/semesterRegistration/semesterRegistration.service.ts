@@ -22,6 +22,7 @@ import {
   StudentSemesterRegistrationCourseService
 } from "../studentSemesterRegistrationCourse/studentSemesterRegistrationCourse.service";
 import {asyncForEach} from "../../../shared/utils";
+import {StudentSemesterPaymentService} from "../studentSemesterPayment/studentSemesterPayment.service";
 
 const createSemesterRegistration = async (
   data: SemesterRegistration
@@ -409,7 +410,7 @@ const startNewSemester = async (id: string) => {
       }
     });
 
-    const studentSemesterRegistration = await prisma.studentSemesterRegistration.findMany({
+    const studentSemesterRegistration = await transaction.studentSemesterRegistration.findMany({
       where: {
         semesterRegistration: {
           id,
@@ -422,7 +423,19 @@ const startNewSemester = async (id: string) => {
     await asyncForEach(
       studentSemesterRegistration,
       async (semester: StudentSemesterRegistration) => {
-        const studentSemesterRegistrationCourses = await prisma.studentSemesterRegistrationCourse.findMany({
+        if(semester.totalCreditsTaken) {
+          const totalPaymentAmount = semester.totalCreditsTaken * 5000;
+
+          await StudentSemesterPaymentService.createSemesterPayment(
+            transaction, {
+              studentId: semester.studentId,
+              academicSemesterId: semesterRegistration.academicSemesterId,
+              totalPaymentAmount
+            }
+          );
+        }
+
+        const studentSemesterRegistrationCourses = await transaction.studentSemesterRegistrationCourse.findMany({
           where: {
             semesterRegistration: {
               id
@@ -447,7 +460,7 @@ const startNewSemester = async (id: string) => {
               course: Course
             }
           }) => {
-            const alreadyEnrolledData = await prisma.studentEnrolledCourse.findFirst({
+            const alreadyEnrolledData = await transaction.studentEnrolledCourse.findFirst({
               where: {
                 studentId: item.studentId,
                 courseId: item.offeredCourse.courseId,
@@ -462,7 +475,7 @@ const startNewSemester = async (id: string) => {
                 academicSemesterId: semesterRegistration.academicSemesterId,
               };
 
-              await prisma.studentEnrolledCourse.create({
+              await transaction.studentEnrolledCourse.create({
                 data: enrolledCourseDetails,
               });
             }
