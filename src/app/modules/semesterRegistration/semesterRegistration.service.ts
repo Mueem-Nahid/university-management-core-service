@@ -1,15 +1,12 @@
-import {
-  Course,
-  OfferedCourse,
-  Prisma,
-  SemesterRegistration,
-  SemesterRegistrationStatus,
-  StudentSemesterRegistration,
-} from '@prisma/client';
+import {Prisma, SemesterRegistration, SemesterRegistrationStatus, StudentSemesterRegistration,} from '@prisma/client';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../../errors/ApiError';
 import httpStatus from 'http-status';
-import {IEnrolledCoursePayload, ISemesterRegistrationFilterRequest,} from './semesterRegistration.interface';
+import {
+  IEnrolledCoursePayload,
+  ISemesterRegistrationFilterRequest,
+  StudentCoursesMap,
+} from './semesterRegistration.interface';
 import {IPaginationOptions} from '../../../interfaces/pagination';
 import {IGenericResponse} from '../../../interfaces/common';
 import {paginationHelpers} from '../../../helpers/paginationHelper';
@@ -21,7 +18,6 @@ import {
 import {
   StudentSemesterRegistrationCourseService
 } from "../studentSemesterRegistrationCourse/studentSemesterRegistrationCourse.service";
-import {asyncForEach} from "../../../shared/utils";
 import {StudentSemesterPaymentService} from "../studentSemesterPayment/studentSemesterPayment.service";
 import {StudentEnrolledCourseMarkService} from "../studentEnrolledCourseMark/studentEnrolledCourseMark.service";
 
@@ -371,6 +367,8 @@ const getMyRegistration = async (authUserId: string) => {
 };
 
 // start new semester after the registration has ended for the semester
+/*
+NOTE: this function is not optimized
 const startNewSemester = async (id: string) => {
   const semesterRegistration = await prisma.semesterRegistration.findUnique({
     where: {
@@ -500,6 +498,117 @@ const startNewSemester = async (id: string) => {
   return {
     message: "Semester started successfully.",
   };
+};
+*/
+
+// start new semester after the registration has ended for the semester
+const startNewSemester = async (id: string) => {
+  const semesterRegistration = await prisma.semesterRegistration.findUnique({
+    where: {id},
+    include: {academicSemester: true},
+  });
+
+  if (!semesterRegistration) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Semester registration not found.");
+  }
+
+  if (semesterRegistration.status !== SemesterRegistrationStatus.ENDED) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Semester registration is not ended yet.");
+  }
+
+  if (semesterRegistration.academicSemester.isCurrent) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Semester is already started.");
+  }
+
+  await prisma.$transaction(async (transaction) => {
+    // Set all semesters to not current
+    await transaction.academicSemester.updateMany({
+      where: {isCurrent: true},
+      data: {isCurrent: false},
+    });
+
+    // Set the current semester
+    await transaction.academicSemester.update({
+      where: {id: semesterRegistration.academicSemester.id},
+      data: {isCurrent: true},
+    });
+
+    const studentSemesterRegistrations = await transaction.studentSemesterRegistration.findMany({
+      where: {
+        semesterRegistrationId: id,
+        isConfirmed: true,
+      },
+    });
+
+    // Get all student IDs and registrations to reduce database calls
+    const studentIds = studentSemesterRegistrations.map((reg) => reg.studentId);
+
+    // Fetch all student registration courses in one call
+    const studentCourses = await transaction.studentSemesterRegistrationCourse.findMany({
+      where: {
+        semesterRegistrationId: id,
+        studentId: {in: studentIds},
+      },
+      include: {
+        offeredCourse: {include: {course: true}},
+      },
+    });
+
+    const studentCoursesMap: StudentCoursesMap = studentCourses.reduce((map, item) => {
+      if (!map[item.studentId]) {
+        map[item.studentId] = [];
+      }
+      map[item.studentId].push(item);
+      return map;
+    }, {} as StudentCoursesMap);
+
+    // Handle student semester registrations and payments in parallel
+    await Promise.all(
+      studentSemesterRegistrations.map(async (semester) => {
+        if (semester.totalCreditsTaken) {
+          const totalPaymentAmount = semester.totalCreditsTaken * 5000;
+
+          await StudentSemesterPaymentService.createSemesterPayment(transaction, {
+            studentId: semester.studentId,
+            academicSemesterId: semesterRegistration.academicSemesterId,
+            totalPaymentAmount,
+          });
+        }
+
+        const courses = studentCoursesMap[semester.studentId] || [];
+
+        await Promise.all(
+          courses.map(async (item: { studentId: any; offeredCourse: { courseId: any; }; }) => {
+            const alreadyEnrolled = await transaction.studentEnrolledCourse.findFirst({
+              where: {
+                studentId: item.studentId,
+                courseId: item.offeredCourse.courseId,
+                academicSemesterId: semesterRegistration.academicSemesterId,
+              },
+            });
+
+            if (!alreadyEnrolled) {
+              const studentEnrolledCourse = await transaction.studentEnrolledCourse.create({
+                data: {
+                  studentId: item.studentId,
+                  courseId: item.offeredCourse.courseId,
+                  academicSemesterId: semesterRegistration.academicSemesterId,
+                },
+              });
+
+              await StudentEnrolledCourseMarkService.createStudentEnrolledCourseDefaultMark(transaction, {
+                studentId: studentEnrolledCourse.studentId,
+                studentEnrolledCourseId: studentEnrolledCourse.id,
+                academicSemesterId: semesterRegistration.academicSemesterId,
+              });
+            }
+          })
+        );
+      })
+    );
+  });
+
+  return {message: "Semester started successfully."};
 };
 
 export const SemesterRegistrationService = {
