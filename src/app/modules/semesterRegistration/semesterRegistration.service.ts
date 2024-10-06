@@ -23,6 +23,7 @@ import {
 } from "../studentSemesterRegistrationCourse/studentSemesterRegistrationCourse.service";
 import {asyncForEach} from "../../../shared/utils";
 import {StudentSemesterPaymentService} from "../studentSemesterPayment/studentSemesterPayment.service";
+import {StudentEnrolledCourseMarkService} from "../studentEnrolledCourseMark/studentEnrolledCourseMark.service";
 
 const createSemesterRegistration = async (
   data: SemesterRegistration
@@ -369,6 +370,7 @@ const getMyRegistration = async (authUserId: string) => {
   return {semesterRegistration, studentSemesterRegistration}
 };
 
+// start new semester after the registration has ended for the semester
 const startNewSemester = async (id: string) => {
   const semesterRegistration = await prisma.semesterRegistration.findUnique({
     where: {
@@ -423,7 +425,7 @@ const startNewSemester = async (id: string) => {
     await asyncForEach(
       studentSemesterRegistration,
       async (semester: StudentSemesterRegistration) => {
-        if(semester.totalCreditsTaken) {
+        if (semester.totalCreditsTaken) {
           const totalPaymentAmount = semester.totalCreditsTaken * 5000;
 
           await StudentSemesterPaymentService.createSemesterPayment(
@@ -475,11 +477,19 @@ const startNewSemester = async (id: string) => {
                 academicSemesterId: semesterRegistration.academicSemesterId,
               };
 
-              await transaction.studentEnrolledCourse.create({
+              const studentEnrolledCourseDetails = await transaction.studentEnrolledCourse.create({
                 data: enrolledCourseDetails,
               });
-            }
 
+              await StudentEnrolledCourseMarkService.createStudentEnrolledCourseDefaultMark(
+                transaction,
+                {
+                  studentId: studentEnrolledCourseDetails.studentId,
+                  studentEnrolledCourseId: studentEnrolledCourseDetails.id,
+                  academicSemesterId: semesterRegistration.academicSemesterId
+                }
+              )
+            }
           }
         )
       }
