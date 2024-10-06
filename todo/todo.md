@@ -3,4 +3,4 @@
    - (get single, update and delete)
 3. ## Add Zod validations and role in the following modules:
 
-- start from 42-9
+- start from 42-9: 12.50 min
