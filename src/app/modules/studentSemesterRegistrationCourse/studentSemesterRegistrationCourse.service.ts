@@ -51,6 +51,17 @@ const enrollIntoCourse = async (
   if (!offeredCourseSection)
     throw new ApiError(httpStatus.NOT_FOUND, 'Offered course section was not found.');
 
+  const alreadyEnrolled = await prisma.studentSemesterRegistrationCourse.findFirst({
+    where:{
+      offeredCourseId:payload.offeredCourseId,
+      studentId: student?.id,
+    }
+  });
+
+  if(alreadyEnrolled) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Already enrolled.');
+  }
+
   await prisma.$transaction(async(transaction) => {
     // create
     await transaction.studentSemesterRegistrationCourse.create({
