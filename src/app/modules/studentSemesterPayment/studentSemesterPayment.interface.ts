@@ -3,3 +3,9 @@ export type ICreateStudentPaymentPayload = {
   academicSemesterId: string,
   totalPaymentAmount: number
 };
+
+export type IStudentSemesterPaymentFilterRequest = {
+  searchTerm?: string | undefined;
+  academicSemesterId?: string | undefined;
+  studentId?: string | undefined;
+}
