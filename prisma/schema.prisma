@@ -321,7 +321,7 @@ model StudentEnrolledCourse {
   grade                     String?
   point                     Float?                        @default(0)
   totalMarks                Int?                          @default(0)
-  status                    SemesterEnrolledCourseStatus? @default(ONGOING)
+  status                    StudentEnrolledCourseStatus? @default(ONGOING)
   createdAt                 DateTime                      @default(now())
   updatedAt                 DateTime                      @updatedAt
   studentEnrolledCourseMark StudentEnrolledCourseMark[]
@@ -329,10 +329,10 @@ model StudentEnrolledCourse {
   @@map("student_enrolled_course")
 }
 
-enum SemesterEnrolledCourseStatus {
-  UPCOMING
+enum StudentEnrolledCourseStatus {
   ONGOING
-  ENDED
+  COMPLETED
+  WITHDRAWN
 }
 
 model StudentEnrolledCourseMark {
