@@ -1,6 +1,13 @@
-import {ExamType, PrismaClient} from "@prisma/client";
+import {ExamType, PrismaClient, StudentEnrolledCourseMark} from "@prisma/client";
 import {ITXClientDenyList} from "@prisma/client/runtime/library";
-import {ICreateStudentEnrolledCourseDefaultMarkPayload} from "./studentEnrolledCourseMark.interface";
+import {
+  ICreateStudentEnrolledCourseDefaultMarkPayload,
+  IStudentEnrolledCourseMarkFilterRequest
+} from "./studentEnrolledCourseMark.interface";
+import {IPaginationOptions} from "../../../interfaces/pagination";
+import {IGenericResponse} from "../../../interfaces/common";
+import {paginationHelpers} from "../../../helpers/paginationHelper";
+import prisma from "../../../shared/prisma";
 
 const createStudentEnrolledCourseDefaultMark = async (
   prismaTransaction: Omit<PrismaClient, ITXClientDenyList>,
@@ -40,7 +47,45 @@ const createStudentEnrolledCourseDefaultMark = async (
       },
     ],
   });
-}
+};
+
+const getAllFromDB = async (
+  filters: IStudentEnrolledCourseMarkFilterRequest,
+  options: IPaginationOptions
+): Promise<IGenericResponse<StudentEnrolledCourseMark[]>> => {
+  const {limit, page} = paginationHelpers.calculatePagination(options);
+  const marks = await prisma.studentEnrolledCourseMark.findMany({
+    where: {
+      student: {
+        id: filters.studentId
+      },
+      academicSemester: {
+        id: filters.academicSemesterId
+      },
+      studentEnrolledCourse: {
+        course: {
+          id: filters.courseId
+        }
+      }
+    },
+    include: {
+      studentEnrolledCourse: {
+        include: {
+          course: true
+        }
+      },
+      student: true
+    }
+  });
+  return {
+    meta: {
+      total: marks.length,
+      page,
+      limit
+    },
+    data: marks
+  };
+};
 
 const updateStudentMarks = async (payload) => {
   console.log(" update marks")
@@ -48,5 +93,6 @@ const updateStudentMarks = async (payload) => {
 
 export const StudentEnrolledCourseMarkService = {
   createStudentEnrolledCourseDefaultMark,
+  getAllFromDB,
   updateStudentMarks
 }
