@@ -7,11 +7,15 @@ import { ITXClientDenyList } from '@prisma/client/runtime/library';
 import {
   ICreateStudentEnrolledCourseDefaultMarkPayload,
   IStudentEnrolledCourseMarkFilterRequest,
+  IUpdateStudentMarksPayload,
 } from './studentEnrolledCourseMark.interface';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import { IGenericResponse } from '../../../interfaces/common';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
+import { StudentEnrolledCourseMarkUtils } from './studentEnrolledCourseMark.utils';
+import ApiError from '../../../errors/ApiError';
+import httpStatus from 'http-status';
 
 const createStudentEnrolledCourseDefaultMark = async (
   prismaTransaction: Omit<PrismaClient, ITXClientDenyList>,
@@ -92,8 +96,46 @@ const getAllFromDB = async (
   };
 };
 
-const updateStudentMarks = async payload => {
-  console.log(' update marks');
+const updateStudentMarks = async (payload: IUpdateStudentMarksPayload) => {
+  const { studentId, academicSemesterId, courseId, examType, marks } = payload;
+  const studentEnrolledCourseMarks =
+    await prisma.studentEnrolledCourseMark.findFirst({
+      where: {
+        student: {
+          id: studentId,
+        },
+        academicSemester: {
+          id: academicSemesterId,
+        },
+        studentEnrolledCourse: {
+          course: {
+            id: courseId,
+          },
+        },
+        examType,
+      },
+    });
+
+  if (!studentEnrolledCourseMarks) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'Student enrolled course mark not found.'
+    );
+  }
+
+  const grade = StudentEnrolledCourseMarkUtils.calculateGrade(marks);
+
+  const updateMark = await prisma.studentEnrolledCourseMark.update({
+    where: {
+      id: studentEnrolledCourseMarks.id,
+    },
+    data: {
+      marks,
+      grade,
+    },
+  });
+
+  return updateMark;
 };
 
 export const StudentEnrolledCourseMarkService = {
