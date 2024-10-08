@@ -1,7 +1,7 @@
-import express from "express";
-import {StudentEnrolledCourseMarkController} from "./studentEnrolledCourseMark.controller";
-import auth from "../../middlewares/auth";
-import {ENUM_USER_ROLE} from "../../../enums/user";
+import express from 'express';
+import { StudentEnrolledCourseMarkController } from './studentEnrolledCourseMark.controller';
+import auth from '../../middlewares/auth';
+import { ENUM_USER_ROLE } from '../../../enums/user';
 
 const router = express.Router();
 
@@ -11,7 +11,8 @@ router.get(
   StudentEnrolledCourseMarkController.getAllFromDB
 );
 
-router.patch('/update-marks',
+router.patch(
+  '/update-marks',
   StudentEnrolledCourseMarkController.updateStudentMarks
 );
 

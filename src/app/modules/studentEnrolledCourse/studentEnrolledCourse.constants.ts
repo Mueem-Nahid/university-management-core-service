@@ -3,7 +3,7 @@ export const studentEnrolledCourseFilterableFields: string[] = [
   'studentId',
   'courseId',
   'status',
-  'grade'
+  'grade',
 ];
 
 export const studentEnrolledCourseSearchableFields: string[] = [];
@@ -11,13 +11,15 @@ export const studentEnrolledCourseSearchableFields: string[] = [];
 export const studentEnrolledCourseRelationalFields: string[] = [
   'academicSemesterId',
   'studentId',
-  'courseId'
+  'courseId',
 ];
 
-export const studentEnrolledCourseRelationalFieldsMapper: { [key: string]: string } = {
+export const studentEnrolledCourseRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   academicSemesterId: 'academicSemester',
   studentId: 'student',
-  courseId: 'course'
+  courseId: 'course',
 };
 
 export const studentEnrolledCourseFilterableFields: string[] = [
@@ -25,7 +27,7 @@ export const studentEnrolledCourseFilterableFields: string[] = [
   'studentId',
   'courseId',
   'status',
-  'grade'
+  'grade',
 ];
 
 export const studentEnrolledCourseSearchableFields: string[] = [];
@@ -33,13 +35,15 @@ export const studentEnrolledCourseSearchableFields: string[] = [];
 export const studentEnrolledCourseRelationalFields: string[] = [
   'academicSemesterId',
   'studentId',
-  'courseId'
+  'courseId',
 ];
 
-export const studentEnrolledCourseRelationalFieldsMapper: { [key: string]: string } = {
+export const studentEnrolledCourseRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   academicSemesterId: 'academicSemester',
   studentId: 'student',
-  courseId: 'course'
+  courseId: 'course',
 };
 
 export const studentEnrolledCourseFilterableFields: string[] = [
@@ -47,7 +51,7 @@ export const studentEnrolledCourseFilterableFields: string[] = [
   'studentId',
   'courseId',
   'status',
-  'grade'
+  'grade',
 ];
 
 export const studentEnrolledCourseSearchableFields: string[] = [];
@@ -55,13 +59,15 @@ export const studentEnrolledCourseSearchableFields: string[] = [];
 export const studentEnrolledCourseRelationalFields: string[] = [
   'academicSemesterId',
   'studentId',
-  'courseId'
+  'courseId',
 ];
 
-export const studentEnrolledCourseRelationalFieldsMapper: { [key: string]: string } = {
+export const studentEnrolledCourseRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   academicSemesterId: 'academicSemester',
   studentId: 'student',
-  courseId: 'course'
+  courseId: 'course',
 };
 
 export const studentEnrolledCourseFilterableFields: string[] = [
@@ -69,7 +75,7 @@ export const studentEnrolledCourseFilterableFields: string[] = [
   'studentId',
   'courseId',
   'status',
-  'grade'
+  'grade',
 ];
 
 export const studentEnrolledCourseSearchableFields: string[] = [];
@@ -77,13 +83,15 @@ export const studentEnrolledCourseSearchableFields: string[] = [];
 export const studentEnrolledCourseRelationalFields: string[] = [
   'academicSemesterId',
   'studentId',
-  'courseId'
+  'courseId',
 ];
 
-export const studentEnrolledCourseRelationalFieldsMapper: { [key: string]: string } = {
+export const studentEnrolledCourseRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   academicSemesterId: 'academicSemester',
   studentId: 'student',
-  courseId: 'course'
+  courseId: 'course',
 };
 
 export const studentEnrolledCourseFilterableFields: string[] = [
@@ -91,7 +99,7 @@ export const studentEnrolledCourseFilterableFields: string[] = [
   'studentId',
   'courseId',
   'status',
-  'grade'
+  'grade',
 ];
 
 export const studentEnrolledCourseSearchableFields: string[] = [];
@@ -99,11 +107,13 @@ export const studentEnrolledCourseSearchableFields: string[] = [];
 export const studentEnrolledCourseRelationalFields: string[] = [
   'academicSemesterId',
   'studentId',
-  'courseId'
+  'courseId',
 ];
 
-export const studentEnrolledCourseRelationalFieldsMapper: { [key: string]: string } = {
+export const studentEnrolledCourseRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   academicSemesterId: 'academicSemester',
   studentId: 'student',
-  courseId: 'course'
+  courseId: 'course',
 };

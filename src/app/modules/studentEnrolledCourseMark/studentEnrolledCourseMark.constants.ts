@@ -3,19 +3,24 @@ export const studentEnrolledCourseMarkFilterableFields: string[] = [
   'studentId',
   'studentEnrolledCourseId',
   'examType',
-  'courseId'
+  'courseId',
 ];
 
-export const studentEnrolledCourseMarkSearchableFields: string[] = ['examType', 'grade'];
+export const studentEnrolledCourseMarkSearchableFields: string[] = [
+  'examType',
+  'grade',
+];
 
 export const studentEnrolledCourseMarkRelationalFields: string[] = [
   'academicSemesterId',
   'studentId',
-  'studentEnrolledCourseId'
+  'studentEnrolledCourseId',
 ];
 
-export const studentEnrolledCourseMarkRelationalFieldsMapper: { [key: string]: string } = {
+export const studentEnrolledCourseMarkRelationalFieldsMapper: {
+  [key: string]: string;
+} = {
   academicSemesterId: 'academicSemester',
   studentId: 'student',
-  studentEnrolledCourseId: 'studentEnrolledCourse'
+  studentEnrolledCourseId: 'studentEnrolledCourse',
 };

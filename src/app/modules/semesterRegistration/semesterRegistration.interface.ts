@@ -1,4 +1,8 @@
-import {Course, OfferedCourse, StudentSemesterRegistrationCourse} from "@prisma/client";
+import {
+  Course,
+  OfferedCourse,
+  StudentSemesterRegistrationCourse,
+} from '@prisma/client';
 
 export type ISemesterRegistrationFilterRequest = {
   searchTerm?: string | undefined;

@@ -12,20 +12,23 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'StudentEnrolledCourse created successfully',
-    data: result
+    data: result,
   });
 });
 
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, studentEnrolledCourseFilterableFields);
   const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-  const result = await StudentEnrolledCourseService.getAllFromDB(filters, options);
+  const result = await StudentEnrolledCourseService.getAllFromDB(
+    filters,
+    options
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'StudentEnrolledCourses fetched successfully',
     meta: result.meta,
-    data: result.data
+    data: result.data,
   });
 });
 
@@ -36,7 +39,7 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'StudentEnrolledCourse fetched successfully',
-    data: result
+    data: result,
   });
 });
 
@@ -47,7 +50,7 @@ const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'StudentEnrolledCourse updated successfully',
-    data: result
+    data: result,
   });
 });
 
@@ -58,7 +61,7 @@ const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'StudentEnrolledCourse deleted successfully',
-    data: result
+    data: result,
   });
 });
 
@@ -67,5 +70,5 @@ export const StudentEnrolledCourseController = {
   getAllFromDB,
   getByIdFromDB,
   updateOneInDB,
-  deleteByIdFromDB
+  deleteByIdFromDB,
 };

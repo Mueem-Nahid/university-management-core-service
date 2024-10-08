@@ -3,4 +3,4 @@ export type IStudentEnrolledCourseFilterRequest = {
   academicSemesterId?: string | undefined;
   studentId?: string | undefined;
   courseId?: string | undefined;
-}
+};

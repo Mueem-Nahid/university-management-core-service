@@ -1,4 +1,4 @@
-import {ExamType} from '@prisma/client';
+import { ExamType } from '@prisma/client';
 
 export type IStudentEnrolledCourseMarkFilterRequest = {
   searchTerm?: string | undefined;
@@ -17,9 +17,9 @@ export type IUpdateStudentMarksPayload = {
 };
 
 export type ICreateStudentEnrolledCourseDefaultMarkPayload = {
-  studentId: string
-  academicSemesterId: string,
-  studentEnrolledCourseId: string
+  studentId: string;
+  academicSemesterId: string;
+  studentEnrolledCourseId: string;
 };
 
 export type IUpdateStudentCourseFinalMarksPayload = {
