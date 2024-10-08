@@ -22,19 +22,35 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateStudentMarks = catchAsync(async (req: Request, res: Response) => {
-  const result = await StudentEnrolledCourseMarkService.updateStudentMarks(
-    req.body
-  );
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Student marks updated successfully',
-    data: result,
-  });
-});
+const updateStudentTermMarks = catchAsync(
+  async (req: Request, res: Response) => {
+    const result =
+      await StudentEnrolledCourseMarkService.updateStudentTermMarks(req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Student marks updated successfully',
+      data: result,
+    });
+  }
+);
+
+const updateStudentFinalMarks = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await StudentEnrolledCourseMarkService.updateFinalMark(
+      req.body
+    );
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Student final marks updated successfully',
+      data: result,
+    });
+  }
+);
 
 export const StudentEnrolledCourseMarkController = {
   getAllFromDB,
-  updateStudentMarks,
+  updateStudentTermMarks,
+  updateStudentFinalMarks,
 };

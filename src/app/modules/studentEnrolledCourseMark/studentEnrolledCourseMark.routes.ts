@@ -12,8 +12,13 @@ router.get(
 );
 
 router.patch(
-  '/update-marks',
-  StudentEnrolledCourseMarkController.updateStudentMarks
+  '/update-term-marks',
+  StudentEnrolledCourseMarkController.updateStudentTermMarks
+);
+
+router.patch(
+  '/update-final-marks',
+  StudentEnrolledCourseMarkController.updateStudentFinalMarks
 );
 
 export const StudentEnrolledCourseMarkRoutes = router;

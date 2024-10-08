@@ -96,7 +96,7 @@ const getAllFromDB = async (
   };
 };
 
-const updateStudentMarks = async (payload: IUpdateStudentMarksPayload) => {
+const updateStudentTermMarks = async (payload: IUpdateStudentMarksPayload) => {
   const { studentId, academicSemesterId, courseId, examType, marks } = payload;
   const studentEnrolledCourseMarks =
     await prisma.studentEnrolledCourseMark.findFirst({
@@ -138,8 +138,13 @@ const updateStudentMarks = async (payload: IUpdateStudentMarksPayload) => {
   return updateMark;
 };
 
+const updateFinalMark = payload => {
+  console.log(payload);
+};
+
 export const StudentEnrolledCourseMarkService = {
   createStudentEnrolledCourseDefaultMark,
   getAllFromDB,
-  updateStudentMarks,
+  updateStudentTermMarks,
+  updateFinalMark,
 };
