@@ -7,6 +7,7 @@ import { ITXClientDenyList } from '@prisma/client/runtime/library';
 import {
   ICreateStudentEnrolledCourseDefaultMarkPayload,
   IStudentEnrolledCourseMarkFilterRequest,
+  IUpdateStudentCourseFinalMarksPayload,
   IUpdateStudentMarksPayload,
 } from './studentEnrolledCourseMark.interface';
 import { IPaginationOptions } from '../../../interfaces/pagination';
@@ -123,7 +124,7 @@ const updateStudentTermMarks = async (payload: IUpdateStudentMarksPayload) => {
     );
   }
 
-  const grade = StudentEnrolledCourseMarkUtils.calculateGrade(marks);
+  const { grade } = StudentEnrolledCourseMarkUtils.calculateGrade(marks);
 
   const updateMark = await prisma.studentEnrolledCourseMark.update({
     where: {
@@ -138,8 +139,69 @@ const updateStudentTermMarks = async (payload: IUpdateStudentMarksPayload) => {
   return updateMark;
 };
 
-const updateFinalMark = payload => {
-  console.log(payload);
+const updateFinalMark = async (
+  payload: IUpdateStudentCourseFinalMarksPayload
+) => {
+  const { studentId, academicSemesterId, courseId } = payload;
+  const studentEnrolledCourse = await prisma.studentEnrolledCourse.findFirst({
+    where: {
+      student: {
+        id: studentId,
+      },
+      academicSemester: {
+        id: academicSemesterId,
+      },
+      course: {
+        id: courseId,
+      },
+    },
+  });
+
+  if (!studentEnrolledCourse) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'Student enrolled course data not found.'
+    );
+  }
+
+  const studentEnrolledCourseMarks =
+    await prisma.studentEnrolledCourseMark.findMany({
+      where: {
+        student: {
+          id: studentId,
+        },
+        academicSemester: {
+          id: academicSemesterId,
+        },
+        studentEnrolledCourse: {
+          course: {
+            id: courseId,
+          },
+        },
+      },
+    });
+
+  if (!studentEnrolledCourseMarks.length) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'Student enrolled course mark not found.'
+    );
+  }
+
+  const midTermMarks =
+    studentEnrolledCourseMarks.find(item => item.examType === ExamType.MIDTERM)
+      ?.marks ?? 0;
+  const finalTermMarks =
+    studentEnrolledCourseMarks.find(item => item.examType === ExamType.FINAL)
+      ?.marks ?? 0;
+
+  const totalFinalMark = StudentEnrolledCourseMarkUtils.calculateFinalMark(
+    midTermMarks,
+    finalTermMarks
+  );
+  const grade = StudentEnrolledCourseMarkUtils.calculateGrade(totalFinalMark);
+
+  console.log(grade);
 };
 
 export const StudentEnrolledCourseMarkService = {
